@@ -1,0 +1,7 @@
+# 归一化源码换行，保证 `index.html` 在任何系统上重新构建都字节一致。
+# Normalise source line endings so `index.html` rebuilds byte-identically on any OS.
+* text=auto eol=crlf
+*.py text eol=lf
+*.md text eol=lf
+*.yml text eol=lf
+*.txt text eol=lf

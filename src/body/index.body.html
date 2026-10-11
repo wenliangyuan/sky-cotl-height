@@ -1,0 +1,195 @@
+
+<canvas id="dust" aria-hidden="true"></canvas>
+<div class="skylight" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+
+<div class="wrap">
+
+  <header class="topbar">
+   <div class="topbar-inner">
+    <div class="brand">
+      <div class="mark" aria-hidden="true"></div>
+      <div>
+        <h1>Sky 身高仪</h1>
+        <p>光遇角色身高查看工具</p>
+      </div>
+    </div>
+    <div class="cat-wrap">
+      <div class="cat-seg" id="catSeg" role="tablist" aria-label="视图切换">
+        <span class="cat-ind" aria-hidden="true"></span>
+        <button data-cat="qr" class="active" role="tab" aria-selected="true">外观 QR</button>
+        <button data-cat="cbg" role="tab" aria-selected="false">藏宝阁</button>
+      </div>
+    </div>
+    <div class="tools">
+      <button class="icon-btn" id="themeBtn" title="切换主题" aria-label="切换主题">
+        <svg id="iconSun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.4"/><path d="M12 2.5v2.4M12 19.1v2.4M2.5 12h2.4M19.1 12h2.4M5 5l1.7 1.7M17.3 17.3L19 19M19 5l-1.7 1.7M6.7 17.3L5 19"/></svg>
+        <svg id="iconMoon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><path d="M20.6 14.2A8.6 8.6 0 0 1 9.8 3.4a8.6 8.6 0 1 0 10.8 10.8z"/></svg>
+      </button>
+      <button class="icon-btn lang-btn" id="langBtn" title="切换语言">中文</button>
+    </div>
+   </div>
+  </header>
+
+  <div class="hero">
+    <span class="kicker" id="heroKicker">Sky · QR Height</span>
+    <h1 id="heroTitle">外观 QR <b>身高</b> 查询</h1>
+    <p id="heroSub">上传游戏内「外观 QR」截图或粘贴 o= 网址，本地即时计算你的身高。</p>
+  </div>
+
+  <!-- ============ 视图：外观 QR ============ -->
+  <div id="view-qr">
+    <section class="card">
+      <div class="card-head">
+        <span class="dot" aria-hidden="true"></span>
+        <h2 id="upTitle">上传外观 QR 或粘贴网址</h2>
+      </div>
+
+      <div class="field-label" id="upLabel">扫码上传</div>
+      <div class="drop" id="drop" role="button" tabindex="0" aria-label="上传二维码截图">
+        <svg class="ic" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+          <defs>
+            <linearGradient id="pgrad" x1="10" y1="8" x2="38" y2="40" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#5EACEB"/><stop offset=".55" stop-color="#E2AD54"/><stop offset="1" stop-color="#606ED2"/>
+            </linearGradient>
+          </defs>
+          <circle cx="24" cy="24" r="10.5" stroke="url(#pgrad)" stroke-width="2.6"/>
+          <path d="M6 27c6-5.4 12-5.4 18-1.6 6.4 4 12.4 3.4 18-1.6" stroke="url(#pgrad)" stroke-width="2.4" stroke-linecap="round"/>
+          <path d="M4 34.5c6.6-5 13-4.6 19.4-.8 6 3.6 12.4 3 20.6-2.4" stroke="url(#pgrad)" stroke-width="2" stroke-linecap="round" opacity=".55"/>
+          <circle cx="34" cy="12.5" r="2.1" fill="#E2AD54"/>
+        </svg>
+        <b>点击或拖拽截图到此处</b>
+        <span>也可直接粘贴截图（Ctrl/⌘+V）</span>
+      </div>
+      <input type="file" id="fileInput" accept="image/*" hidden>
+
+      <div class="field-label" id="urlLabel">粘贴网址</div>
+      <textarea id="urlInput" placeholder="粘贴完整网址，例如 https://sky.thatg.co/o=..."></textarea>
+
+      <button class="btn block" id="calcBtn">
+        <span class="svg-wrapper" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h14M13 6l6 6-6 6"/></svg>
+        </span>
+        <span class="ui-label">开始计算</span>
+      </button>
+      <div class="status" id="status" role="status" aria-live="polite"></div>
+    </section>
+
+    <section class="card rb-beam" id="resultCard" hidden><i class="rb-beam-el" aria-hidden="true"></i>
+      <div class="card-head">
+        <span class="dot" aria-hidden="true"></span>
+        <h2 id="resultTitle">你的身高数值</h2>
+      </div>
+      <div class="bento">
+        <div class="tile num-tile">
+          <div class="tl" id="resCurrentLabel">当前身高</div>
+          <div class="num-big" id="resCurrent">—</div>
+        </div>
+        <div class="tile max">
+          <div class="tl" id="resTallestLabel">最高</div>
+          <div class="stat-val" id="resTallest">—</div>
+        </div>
+        <div class="tile min">
+          <div class="tl" id="resShortestLabel">最矮</div>
+          <div class="stat-val" id="resShortest">—</div>
+        </div>
+      </div>
+      <div class="row">
+        <button class="btn ghost" id="saveImgBtn">保存图片</button>
+      </div>
+      <details>
+        <summary>原始数据 (JSON)</summary>
+        <pre class="json" id="resJson"></pre>
+      </details>
+    </section>
+
+    <section class="card" id="potionCard" hidden>
+      <div class="card-head">
+        <span class="dot" aria-hidden="true"></span>
+        <h2 id="potionTitle">喝一瓶重塑药水？</h2>
+      </div>
+      <div class="potion-grid">
+        <div class="potion-visual-wrap">
+          <div class="potion-visual" id="potionVisual" aria-hidden="true"></div>
+          <div class="potion-count" style="text-align:center;margin-top:8px">已喝 <span id="potionCount">0</span> 瓶</div>
+        </div>
+        <div class="potion-side">
+          <div class="potion-readout">
+            <div class="num" id="potionResult">—</div>
+            <div class="potion-note" id="potionNote"></div>
+          </div>
+          <div class="potion-actions">
+            <button class="btn ghost" id="potionBtn">喝下药水</button>
+            <button class="btn ghost" id="potionReset">重置</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="card-head">
+        <span class="dot" aria-hidden="true"></span>
+        <h2 id="histTitle">历史测量</h2>
+      </div>
+      <div class="hist-list" id="histList"></div>
+      <div class="empty" id="histEmpty">还没有记录，先计算一次吧 ✨</div>
+      <button class="btn ghost btn-sm" id="clearHist" style="margin-top:10px" hidden>清空历史</button>
+    </section>
+  </div>
+
+  <!-- ============ 视图：藏宝阁 ============ -->
+  <div id="view-cbg" hidden>
+    <section class="card">
+      <div class="card-head">
+        <span class="dot" aria-hidden="true"></span>
+        <h2>藏宝阁身高提取</h2>
+      </div>
+
+      <label id="cbgLinkLabel" class="field-label" for="links">藏宝阁链接（每行一个，支持批量）</label>
+      <textarea id="links" placeholder="https://sky.cbg.163.com/cgi/mweb/equip/1/8ae21245-0cad-4552-a88e-414aae549e02?..."></textarea>
+      <div class="row tight">
+        <button class="btn" id="run">
+          <span class="svg-wrapper" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h14M13 6l6 6-6 6"/></svg>
+          </span>
+          <span class="ui-label">提取并计算</span>
+        </button>
+        <button class="btn ghost" id="paste">一键粘贴</button>
+        <button class="btn ghost" id="clear">清空</button>
+        <button class="btn btn-text" id="sample">填入示例</button>
+        <button class="btn ghost" id="saveImg" hidden>保存为图片</button>
+      </div>
+      <div class="hint" id="cbgHint"></div>
+
+      <details>
+        <summary id="cbgManualSum">手动输入 / 公式说明</summary>
+        <div class="row" style="align-items:flex-end">
+          <div class="grow">
+            <label id="lblManualS" class="field-label" for="manualS">体型值 S（scale）</label>
+            <input id="manualS" type="text" placeholder="如 0.0386725892" />
+          </div>
+          <div class="grow">
+            <label id="lblManualH" class="field-label" for="manualH">身高值 H（height）</label>
+            <input id="manualH" type="text" placeholder="如 1.9625966083" />
+          </div>
+          <button class="btn" id="manualRun">手动计算</button>
+        </div>
+        <div class="formula" id="cbgFormula">
+          计算公式（已用真实数据逐位校验）：<br>
+          <code>当前身高 = 7.6 − 8.3×S − 3×H</code><br>
+          <code>最高身高 = 1.6 − 8.3×S</code><br>
+          <code>最矮身高 = 13.6 − 8.3×S</code><br>
+          <code>矮人面具身高 = 16.6 − 8.3×S</code><br><br>
+          注：部分身高计算器显示的「身高值」为 <code>round(height × 10¹⁰)</code> 的整数形式（如 19625966083）。
+        </div>
+      </details>
+    </section>
+
+    <div id="out"></div>
+  </div>
+
+  <p class="foot">
+    结果为社区近似身高（公式 7.6 − 8.3·S − 3·H），仅供参考，与 thatgamecompany / 网易无关。<br>
+  </p>
+</div>
+

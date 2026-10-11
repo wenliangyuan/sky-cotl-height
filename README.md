@@ -1,0 +1,88 @@
+# Sky 身高仪 · Sky COTL Height Tool
+
+纯前端的《Sky 光·遇》身高查询工具：单文件、零后端、零上传，所有解析与计算都在浏览器里完成。
+
+- **藏宝阁检测** —— 粘贴藏宝阁商品链接，直读公开 JSON，给出该号的体型 / 身高 / 毕业季 / 无翼，以及当前·最高·最矮·矮人面具四个身高
+- **外观 QR 身高** —— 上传游戏内「外观 QR」截图，或粘贴 `o=` 网址，本地解出身高
+
+> 扫码算身高社区里已有多个实现；而**藏宝阁检测**目前没检索到公开实现，是本项目的重点。
+
+## 藏宝阁检测（本项目重点）
+
+**不登录、不抓包、不装插件**——粘贴一个藏宝阁商品链接，直接读出这个号真实的体型与身高。
+
+藏宝阁网页在渲染商品页时会自行拉取一份公开的装备描述 JSON：
+
+```
+https://cbg-other-desc.res.netease.com/sky/static/equipdesc/{商品ID}.json
+```
+
+身高等信息就在其中的 `equip_desc` 里（解析后取 `raw_content`）。本项目在浏览器里直读这个 JSON，取出：
+
+| 字段 | 来源 | 展示为 |
+|---|---|---|
+| `equipped_outfit.scale` | `equip_desc` → `raw_content` | 体型值 S（10 位精度） |
+| `equipped_outfit.height` | 同上 | 身高值 H，同时给出 `round(H × 10¹⁰)` 整数形式 |
+| `season_graduation_count`（或 `season_graduation` 数组长度） | `raw_content` | 毕业季节数 |
+| `is_wingless` | `raw_content` | **无翼 / 有翼** 标记 |
+
+拿到 S、H 后按下节公式算出**当前 / 最高 / 最矮 / 矮人面具**四个身高，连同无翼状态一起并列展示——挑小号时最关心的几项都在同一张卡片上。
+
+**批量比价**：输入框支持每行一个商品链接（需含 `/equip/<数字>/<商品ID>`，即从藏宝阁复制来的完整链接），一次解析成一整张表（商品ID / S / H / 当前 / 最高 / 最矮 / 毕业季 / 无翼），整表可导出为图片。
+
+**两层容错**：
+
+1. **直连**——正常情况下一次请求即可，数据不经过任何第三方；
+2. **公共 CORS 代理**——直连被浏览器跨域策略拦截时，依次尝试 5 个代理。
+
+全部失败时会直接报错并提示在浏览器中打开商品页（`file://` 或 App 内置预览面板最容易触发跨域拦截）。
+
+> 走代理时，请求会经由第三方服务器中转；不希望如此的话，请用本地静态服务器或 GitHub Pages 打开本页，让直连生效。
+
+## 计算公式
+
+设 `S = scale`（体型值），`H = height`（身高值）：
+
+```
+当前身高     = 7.6  − 8.3 × S − 3 × H
+最高身高     = 1.6  − 8.3 × S      （H = +2）
+最矮身高     = 13.6 − 8.3 × S      （H = −2）
+矮人面具身高 = 16.6 − 8.3 × S      （比最矮还矮）
+```
+
+**方向**：算出的数值**越小越高**——`1.6 − 8.3S` 是最高，`16.6 − 8.3S`（矮人面具）最矮；换算到身高值 H 则是**越大越高**（`H = +2` 最高，`H = −2` 最矮）。部分计算器显示的身高值是 `round(height × 10¹⁰)` 的整数形式，本工具两种都能识别。
+
+> ⚠️ 待核对：`app.js` 的 `calculateStats()`（外观 QR 路径）里 `tallest` / `shortest` 的取值与上述方向相反，疑似标签写反，欢迎 PR。
+
+## 使用
+
+**藏宝阁**：粘贴商品链接（每行一个，完整链接，支持批量）后点「提取」。
+
+**外观 QR**：
+
+1. 游戏内 **设置 → 账号 → 账号信息 → 外观 QR（造型 QR code）**（不是加好友用的二维码），截图。
+2. 拖入截图 / `Ctrl+V` 粘贴，或粘贴 `https://sky.thatg.co/o=...` 整段网址，点「计算」。
+
+## 运行与构建
+
+无需构建，双击 `index.html` 即可（`file://` 下浏览器会拦截藏宝阁的跨域请求，建议用静态服务器或 Pages）。
+
+```bash
+python -m http.server 8000      # 本地运行
+python tools/build.py           # 由 src/ 重新生成 index.html
+python tools/build.py --check   # 校验产物与源码是否同步（CI 用）
+```
+
+`index.html` 是唯一部署文件，内容拆在 `src/`（app.js、styles/app.css、body/、vendor/）里便于审查；两边逐字节一致。
+
+## 许可与免责
+
+MIT。内嵌 [jsQR](https://github.com/cozmo/jsQR) 1.4.0（Apache-2.0）与 [html2canvas](https://github.com/niklasvh/html2canvas) 1.4.1（MIT），声明见 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。
+
+非官方项目，与 thatgamecompany / 网易无关。身高数值为社区近似推导，仅供参考。
+
+## 同类项目
+
+- <https://github.com/dream10325/sky-cotl-height-tool> — 扫码算身高，多语言
+- <https://github.com/JustinLove/sky-outfit-code-height> — 说明 QR 载荷实为 LZ4 块压缩 + base64url 的 JSON
+- <https://github.com/naxida521/sky-height> — 扫码 + 穿搭展示 + 后台
