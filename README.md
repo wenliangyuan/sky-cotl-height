@@ -26,11 +26,6 @@ https://cbg-other-desc.res.netease.com/sky/static/equipdesc/{商品ID}.json
 
 **批量比价**：输入框支持每行一个商品链接（需含 `/equip/<数字>/<商品ID>`，即从藏宝阁复制来的完整链接），一次解析成一整张表（商品ID / S / H / 当前 / 最高 / 最矮 / 毕业季 / 无翼），整表可导出为图片。
 
-**两层容错**：
-
-1. **直连**——正常情况下一次请求即可，数据不经过任何第三方；
-2. **公共 CORS 代理**——直连被浏览器跨域策略拦截时，依次尝试 5 个代理。
-
 ## 计算公式
 
 设 `S = scale`（体型值），`H = height`（身高值）：
@@ -55,10 +50,4 @@ https://cbg-other-desc.res.netease.com/sky/static/equipdesc/{商品ID}.json
 
 ## 运行与构建
 
-无需构建，双击 `index.html` 即可（`file://` 下浏览器会拦截藏宝阁的跨域请求，建议用静态服务器或 Pages）。
-
-```bash
-python -m http.server 8000      # 本地运行
-python tools/build.py           # 由 src/ 重新生成 index.html
-python tools/build.py --check   # 校验产物与源码是否同步（CI 用）
-```
+无需构建，双击 `index.html` 即可。
