@@ -44,8 +44,6 @@ https://cbg-other-desc.res.netease.com/sky/static/equipdesc/{商品ID}.json
 
 **方向**：算出的数值**越小越高**——`1.6 − 8.3S` 是最高，`16.6 − 8.3S`（矮人面具）最矮；换算到身高值 H 则是**越大越高**（`H = +2` 最高，`H = −2` 最矮）。部分计算器显示的身高值是 `round(height × 10¹⁰)` 的整数形式，本工具两种都能识别。
 
-> ⚠️ 待核对：`app.js` 的 `calculateStats()`（外观 QR 路径）里 `tallest` / `shortest` 的取值与上述方向相反，疑似标签写反，欢迎 PR。
-
 ## 使用
 
 **藏宝阁**：粘贴商品链接（每行一个，完整链接，支持批量）后点「提取」。
