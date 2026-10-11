@@ -3,11 +3,9 @@
 - **藏宝阁检测** —— 粘贴藏宝阁商品链接，直读公开 JSON，给出该号的体型 / 身高 / 毕业季 / 无翼，以及当前·最高·最矮·矮人面具四个身高
 - **外观 QR 身高** —— 上传游戏内「外观 QR」截图，或粘贴 `o=` 网址，本地解出身高
 
-> 扫码算身高社区里已有多个实现；而**藏宝阁检测**目前没检索到公开实现，是本项目的重点。
-
 ## 藏宝阁检测
 
-**不登录、不抓包、不装插件**——粘贴一个藏宝阁商品链接，直接读出这个号真实的体型与身高。
+****——粘贴一个藏宝阁商品链接，直接读出这个号真实的体型与身高。
 
 藏宝阁网页在渲染商品页时会自行拉取一份公开的装备描述 JSON：
 
@@ -66,17 +64,3 @@ python -m http.server 8000      # 本地运行
 python tools/build.py           # 由 src/ 重新生成 index.html
 python tools/build.py --check   # 校验产物与源码是否同步（CI 用）
 ```
-
-`index.html` 是唯一部署文件，内容拆在 `src/`（app.js、styles/app.css、body/、vendor/）里便于审查；两边逐字节一致。
-
-## 许可与免责
-
-MIT。内嵌 [jsQR](https://github.com/cozmo/jsQR) 1.4.0（Apache-2.0）与 [html2canvas](https://github.com/niklasvh/html2canvas) 1.4.1（MIT），声明见 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。
-
-非官方项目，与 thatgamecompany / 网易无关。身高数值为社区近似推导，仅供参考。
-
-## 同类项目
-
-- <https://github.com/dream10325/sky-cotl-height-tool> — 扫码算身高，多语言
-- <https://github.com/JustinLove/sky-outfit-code-height> — 说明 QR 载荷实为 LZ4 块压缩 + base64url 的 JSON
-- <https://github.com/naxida521/sky-height> — 扫码 + 穿搭展示 + 后台
